@@ -24,7 +24,7 @@ Para construir el proyecto y dejar los ficheros finales en la carpeta __/dist__
     * __parametros:__ sin parametros
 
 * http://localhost:3000/validar-rut?rut=numero-rut
-    * __resultado:__ El resultado de la operacion es: 30
+    * __resultado:__ El rut suministrado (numero-rut) es : valido | invalido
     * __parametros:__ rut:_string_ con o sin puntos, con o sin guion.
 
 * http://localhost:3000/buscar-subcadena?cadena=string&subcadena=substring
