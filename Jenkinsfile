@@ -5,13 +5,14 @@ pipeline {
     }
     stages{
         stage("build"){
-            agent {
-                docker {
-                    label 'contenedores'
-                    image 'node:22-alpine'
-                    reuseNode true
+          agent {
+        docker {
+                        label 'contenedores'
+                        image 'node:22-alpine'
+                        reuseNode true
+                        args '-v $WORKSPACE:/app'  // Asegura que el directorio del código esté montado
+                    }
                 }
-            }
             stages{
                 stage("build - instalacion dependencias"){
                     steps{
