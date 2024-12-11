@@ -1,10 +1,16 @@
 pipeline {
     agent any
-
+    environment {
+        USERNAME = "Siegfried"
+    }
     stages{
         stage("build"){
             agent {
-       
+                docker {
+                    label 'contenedores'
+                    image 'node:22-alpine'
+                    reuseNode true
+                }
             }
             stages{
                 stage("build - instalacion dependencias"){
