@@ -1,51 +1,70 @@
 pipeline {
     agent any
 
-    stages {
-        // Etapa para instalar dependencias
-        stage('Instalar dependencias') {
-            steps {
-                echo 'Instalando dependencias...'
-                script {
-                    // Si estás utilizando npm para un proyecto Node.js
-                    sh 'npm install'
-                    // Si estás utilizando otro gestor de dependencias, reemplaza el comando anterior
+    stages{
+        stage("build"){
+            agent {
+       
+            }
+            stages{
+                stage("build - instalacion dependencias"){
+                    steps{
+                        sh 'npm install'
+                    }
+                }
+                stage("build - ejecucion de test"){
+                    steps{
+                        sh 'npm run test'
+                    }
+                }
+                stage("build - build del proyecto"){
+                    steps{
+                        sh 'npm run build'
+                    }
                 }
             }
         }
-
-        // Etapa para ejecutar las pruebas
-        stage('Testing') {
-            steps {
-                echo 'Ejecutando pruebas...'
-                script {
-                    // Ejecuta las pruebas, por ejemplo con npm para un proyecto Node.js
-                    sh 'npm test'
-                    // Si utilizas otro marco de pruebas, ajusta el comando correspondiente
-                }
-            }
-        }
-
-        // Etapa para construir la aplicación
-        stage('Build') {
-            steps {
-                echo 'Construyendo la aplicación...'
-                script {
-                    // Comando para construir la aplicación, por ejemplo para un proyecto Node.js
-                    sh 'npm run build'
-                    // Si estás construyendo en otro entorno, ajusta este paso según sea necesario
-                }
-            }
-        }
-    }
-
-    post {
-        success {
-            echo 'Pipeline completado exitosamente.'
-        }
-        failure {
-            echo 'El pipeline ha fallado.'
-        }
-    }
+         stage("Quality assurance"){
+             agent {
+                 docker {
+                     label 'contenedores'
+                     image 'sonarsource/sonar-scanner-cli'
+                     args '--network=devops-infra_default'
+                     reuseNode true
+                 }
+             }
+             stages{
+                 stage("Quality assurance - sonarqube"){
+                     steps{
+                         withSonarQubeEnv('sonarqube') {
+                             sh 'sonar-scanner'
+                         }
+                     }
+                 }
+                 stage("Quality assurance - quality gate"){
+                     steps{
+                         script{
+                             timeout(time: 1, unit: 'MINUTES') {
+                                 def qg = waitForQualityGate()
+                                 if (qg.status != 'OK') {
+                                     error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                                 }
+                             }
+                         }
+                     }
+                 }
+             }
+         }
+         stage("delivery - subida a nexus"){
+            steps{
+                 script {
+                     docker.withRegistry("http:localhost:8082", "registry"){
+                         sh 'docker build -t backend-devops .'
+                         sh 'docker tag backend-devops:latest localhost:8082/backend-devops:latest'
+                         sh 'docker push localhost:8082/backend-devops:latest'
+                     }
+                 }
+            } 
+         }
+    }
 }
-
