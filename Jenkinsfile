@@ -1,12 +1,19 @@
 pipeline {
     agent any
-    stage("Primera etapa"){
-        steps{
-            echo "saludos desde mi primer pipeline"
+
+    stages {
+        stage('Primera etapa') {
+            steps {
+                echo 'Ejecutando la primera etapa'
+                // Aquí agregas los pasos de tu primer stage
+            }
         }
-    stage("Segunda etapa"){
-        steps{
-            echo "saludos desde mi segundo pipeline"
+
+        stage('Segunda etapa') {
+            steps {
+                echo 'Ejecutando la segunda etapa'
+                // Aquí agregas los pasos de tu segunda etapa
+            }
         }
     }
-    }}
+}
