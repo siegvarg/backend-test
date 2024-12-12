@@ -1,6 +1,6 @@
 import { describe, test, expect } from "@jest/globals"
-import {contarCoincidenciasEnCadena} from "../backend-test/src/app/cadenas"
-import {validarRUT} from "../backend-test/src/app/rut"
+import {contarCoincidenciasEnCadena} from "./src/app/cadenas"
+import {validarRUT} from "./src/app/rut"
 
 describe('contarCoincidenciasEnCadena', () => {
     it('debería contar correctamente las coincidencias de una subcadena en una cadena', () => {
