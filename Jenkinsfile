@@ -31,6 +31,7 @@ pipeline {
                 docker {
                     label 'contenedores'
                     image 'sonarsource/sonar-scanner-cli'
+                    args '--network=devops-infra_default'
                     reuseNode true
                 }
             }
