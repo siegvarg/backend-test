@@ -58,33 +58,3 @@ describe('validarRUT', () => {
         expect(validarRUT('12.345.678-5')).not.toBe(false);
     });
  });
- describe('Configuration tests', () => {
-    const originalEnv = { ...process.env };
-
-    afterEach(() => {
-        // Restaurar las variables de entorno originales
-        process.env = { ...originalEnv };
-    });
-
-    it('should use environment variables if they are defined', () => {
-        process.env.USERNAME = 'test-user';
-        process.env.APIKEY = 'test-key';
-        process.env.PORT = '4000';
-
-        const { configuration } = require('./path-to-configuration'); // Asegúrate de importar el archivo correcto
-        expect(configuration.username).toBe('test-user');
-        expect(configuration.apikey).toBe('test-key');
-        expect(configuration.port).toBe(4000);
-    });
-
-    it('should use default values if environment variables are not defined', () => {
-        delete process.env.USERNAME;
-        delete process.env.APIKEY;
-        delete process.env.PORT;
-
-        const { configuration } = require('./path-to-configuration');
-        expect(configuration.username).toBe('default');
-        expect(configuration.apikey).toBe('default-key');
-        expect(configuration.port).toBe(3000);
-    });
-});
